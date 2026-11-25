@@ -1,3 +1,5 @@
+> **Selkomark distribution.** This is Selkomark's fork of Bevy. Branching, upstream merges and contribution rules: see [SELKOMARK.md](SELKOMARK.md).
+
 # [![Bevy](https://bevy.org/assets/bevy_logo_light_dark_and_dimmed.svg)](https://bevy.org)
 
 [![License](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/bevyengine/bevy#license)
