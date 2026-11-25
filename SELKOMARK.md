@@ -20,64 +20,51 @@ cd bevy
 git remote add upstream https://github.com/bevyengine/bevy.git
 git remote set-url --push upstream DISABLED   # prevents accidental pushes to Bevy
 git fetch upstream --tags
-git switch selkomark-main
+git switch master
 
 # Recommended: remember conflict resolutions across upstream merges
 git config rerere.enabled true
 git config merge.conflictstyle zdiff3
+
+# Required: without this, `gh pr create` targets bevyengine/bevy instead of the fork
+gh repo set-default Selkomark/bevy
 ```
 
 ## Branches
 
 | Branch            | Contents                                         | Who commits                         |
 |-------------------|--------------------------------------------------|-------------------------------------|
-| `selkomark-main`  | The Selkomark distro: latest Bevy release plus our changes. Default branch. | Merges from feature branches and upstream releases only. |
+| `master`          | The Selkomark distro: latest Bevy release plus our changes. Default branch. | Merges from feature branches and upstream releases only. |
 | `main`            | Exact mirror of `upstream/main`.                  | Nobody. Fast-forward from upstream only. |
-| `feat/<name>`     | New Selkomark features.                           | Developers, branched from `selkomark-main`. |
-| `fix/<name>`      | Bug fixes to the distro.                          | Developers, branched from `selkomark-main`. |
+| `feat/<name>`     | New Selkomark features.                           | Developers, branched from `master`. |
+| `fix/<name>`      | Bug fixes to the distro.                          | Developers, branched from `master`. |
 | `upgrade/<tag>`   | Integration branch for merging a new Bevy release.| Maintainer performing the upgrade.  |
 
 Rules:
 
+- `master` and `main` are different branches. `master` is ours; `main` is Bevy's. Do not mix them up.
 - Never commit directly to `main`. It must stay identical to `upstream/main`.
-- Never commit directly to `selkomark-main`. All changes land via pull request.
-- Always branch from `selkomark-main`, and open pull requests against `selkomark-main`.
+- Never commit directly to `master`. All changes land via pull request.
+- Always branch from `master`, and open pull requests against `master`.
 - Do not open pull requests against `bevyengine/bevy` from this repository's branches unless
   the change is intentionally being contributed upstream (see [Contributing upstream](#contributing-upstream)).
 
 ## Day-to-day workflow
 
 ```sh
-git switch selkomark-main
+git switch master
 git pull
 git switch -c feat/my-feature
 # ... work, commit ...
 git push -u origin feat/my-feature
-gh pr create --base selkomark-main
+gh pr create --base master
 ```
 
 ## Upgrading to a new Bevy release
 
-Upstream Bevy releases are published as tags (`v0.21.0`, `v0.21.1`, ...).
-We merge **release tags**, not `upstream/main`, so the distro is always based on a stable release.
-
-```sh
-git fetch upstream --tags
-git switch selkomark-main
-git pull
-git switch -c upgrade/v0.21.0
-git merge v0.21.0
-# resolve conflicts (look for `SELKOMARK:` markers, see below)
-cargo build --workspace
-cargo test --workspace
-git push -u origin upgrade/v0.21.0
-gh pr create --base selkomark-main --title "Upgrade to Bevy v0.21.0"
-```
-
-After the PR merges, tag the distro release (see [Versioning](#versioning)).
-
-Do not rebase `selkomark-main` onto upstream and do not cherry-pick upstream commits.
-Merging tags keeps history linear with Bevy's and lets `rerere` reuse past conflict resolutions.
+New Bevy releases are merged into `master` through an `upgrade/<tag>` branch and a pull request.
+The full procedure, including conflict resolution, verification, and rollback, is in
+[SELKOMARK_UPSTREAM_MERGE.md](SELKOMARK_UPSTREAM_MERGE.md).
 
 ### Keeping `main` in sync (optional)
 
@@ -119,7 +106,7 @@ Distro releases are tagged `selkomark-v<bevy version>-<n>`, where `<n>` starts a
 for each distro release on the same Bevy version:
 
 ```sh
-git switch selkomark-main
+git switch master
 git pull
 git tag -a selkomark-v0.20.1-1 -m "Selkomark distro on Bevy 0.20.1"
 git push origin selkomark-v0.20.1-1
@@ -145,7 +132,7 @@ Once upstream merges it and it ships in a release, remove our copy during the ne
 
 | Task                          | Command                                              |
 |-------------------------------|------------------------------------------------------|
-| Start a feature               | `git switch selkomark-main && git pull && git switch -c feat/x` |
+| Start a feature               | `git switch master && git pull && git switch -c feat/x` |
 | See all Selkomark patches     | `git grep -n SELKOMARK`                              |
 | Diff distro vs. its Bevy base | `git diff $(git describe --tags --match 'v*' --abbrev=0) --stat` |
 | List upstream releases        | `git tag -l 'v*' --sort=-v:refname \| head`          |

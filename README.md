@@ -1,4 +1,4 @@
-> **Selkomark distribution.** This is Selkomark's fork of Bevy. Branching, upstream merges and contribution rules: see [SELKOMARK.md](SELKOMARK.md).
+> **Selkomark distribution.** This is Selkomark's fork of Bevy. The distro branch is `master`; `main` mirrors upstream Bevy. Workflow: [SELKOMARK.md](SELKOMARK.md). Merging new Bevy releases: [SELKOMARK_UPSTREAM_MERGE.md](SELKOMARK_UPSTREAM_MERGE.md).
 
 # [![Bevy](https://bevy.org/assets/bevy_logo_light_dark_and_dimmed.svg)](https://bevy.org)
 
